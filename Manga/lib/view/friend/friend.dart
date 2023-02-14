@@ -3,6 +3,8 @@ import 'package:manga_read/common/utils/extensions.dart';
 import 'package:manga_read/controller/friend_controller.dart';
 import 'package:get/get.dart';
 import 'package:manga_read/view/friend/widgets/friend_card.dart';
+import 'package:manga_read/view/friend/widgets/request_friend.dart';
+import 'package:manga_read/view/widgets/message.dart';
 import 'package:manga_read/view/widgets/search_user.dart';
 import '../../common/values/const.dart';
 
@@ -27,7 +29,7 @@ class FriendUI extends StatelessWidget {
             onPressed: () {
               showSearch(context: context, delegate: SearchUser());
             },
-            icon: const Icon(Icons.search, size: 28,)
+            icon: const Icon(Icons.person_search_sharp, size: 28,)
           )
         ],
       ),
@@ -37,10 +39,22 @@ class FriendUI extends StatelessWidget {
           color: Colors.white,
           child: ListView(
             shrinkWrap: true,
-            children: [
-              ...controller.friends.map((e) => FriendCard(user: e))
-            ],
             physics:const BouncingScrollPhysics(),
+            children: [
+              if (controller.friends.isEmpty)Message(message: 'You don\'t \n have friends'),
+              ...controller.friends.map((e) => FriendCard(user: e)),
+              SizedBox(height: 3.0.hp,),
+              Text(
+                'Friend Request',
+                style: TextStyle(
+                  fontSize: 18.0.sp,
+                  fontWeight: FontWeight.bold
+                ),
+              ),
+              SizedBox(height: 3.0.hp,),
+              if (controller.requsetFriends.isEmpty)Message(message: 'You don\'t  \n have \n request friends'),
+              ...controller.requsetFriends.map((e) => FriendRequestCard(user: e))
+            ],
           ),
         ),
       )

@@ -57,7 +57,7 @@ class RecentComic extends GetView<RecentController> {
 
   ComicCardList items(Comic comic, String recent) {
     String latestChapter = comic.last_chapter;
-    comic.last_chapter = 'Chapter $recent';
+    comic.last_chapter = recent;
     return ComicCardList(comic: comic, onTapCard: () {
       comic.last_chapter = latestChapter;
       Get.toNamed(RouterNavigation.detail, arguments: comic);

@@ -32,9 +32,10 @@ class ResetPasswordController extends GetxController {
   Future<void> resetPass(String newPass, String oldPass) async {
     bool success = await resetPasswordRepository.resetPass(newPass, oldPass);
      if (success) {
+      EasyLoading.showSuccess('Reset password success!', dismissOnTap: true);
       Get.back();
     } else {
-      EasyLoading.showError('Wrong password!');
+      EasyLoading.showError('Current password is wrong !');
     }
   }
 }

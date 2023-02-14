@@ -9,13 +9,15 @@ class ResetPasswordRepository {
   ResetPasswordRepository({required this.resetPasswordProvider});
 
   Future<bool> resetPass(String newPass, String oldPass) async {
-    Response response = await resetPasswordProvider.resetPass(store.read('userId'), newPass);
     String oldP = await store.read('pass');
     if (oldPass == oldP) {
+      Response response = await resetPasswordProvider.resetPass(store.read('userId'), newPass);
       if (response.statusCode == Constant.STATUS_OK) {
+        store.write('pass', newPass);
         print('reset oke');
       } else {
         print(response.statusCode);
+        return false;
       }
       return true;
     }

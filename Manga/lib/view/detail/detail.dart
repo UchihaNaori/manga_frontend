@@ -8,6 +8,8 @@ import 'package:manga_read/view/detail/widgets/volumes.dart';
 import '../../common/utils/extensions.dart';
 import 'package:blur/blur.dart';
 
+import '../../data/chapter.dart';
+
 class Detail extends GetView<DetailController> {
   @override
   Widget build(BuildContext context) {
@@ -71,7 +73,7 @@ class Detail extends GetView<DetailController> {
                         Row(
                           children: [
                             Container(
-                              width: 28.0.wp,
+                              width: 41.5.wp,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
                                 color: controller.showInfor.value == 0 ? const Color.fromRGBO(97, 67, 133, 1) : Colors.white,
@@ -91,14 +93,14 @@ class Detail extends GetView<DetailController> {
                             ),
 
                             Container(
-                              width: 27.0.wp,
+                              width: 41.5.wp,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
                                 color: controller.showInfor.value == 1 ? const Color.fromRGBO(97, 67, 133, 1): Colors.white
                               ),
                               child: TextButton(
                                 child: Text(
-                                  'Chapter',
+                                  'Volume',
                                   style: TextStyle(
                                     fontSize: 13.0.sp,
                                     color:controller.showInfor.value == 1 ? Colors.white :  const Color.fromRGBO(97, 67, 133, 1)
@@ -106,26 +108,6 @@ class Detail extends GetView<DetailController> {
                                 ),
                                 onPressed: () {
                                   controller.setShowInfor(1);
-                                },
-                              ),
-                            ),
-
-                            Container(
-                              width: 28.0.wp,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: controller.showInfor.value == 2 ? const Color.fromRGBO(97, 67, 133, 1): Colors.white
-                              ),
-                              child: TextButton(
-                                child: Text(
-                                  'Volume',
-                                  style: TextStyle(
-                                    fontSize: 13.0.sp,
-                                    color:controller.showInfor.value == 2 ? Colors.white :  const Color.fromRGBO(97, 67, 133, 1)
-                                  ),
-                                ),
-                                onPressed: () {
-                                  controller.setShowInfor(2);
                                 },
                               ),
 
@@ -149,25 +131,23 @@ class Detail extends GetView<DetailController> {
                     ),
                   ),
                   SizedBox(height: 2.0.hp),
-                  GetX<DetailController>(builder: (controller) {
+                  GetBuilder<DetailController>(builder: (controller) {
                     if (controller.showInfor.value == 0) {
                       return Information();
-                    }
-                    if (controller.showInfor.value == 2) {
-                      return Volume();
                     }
                     return Expanded(
                       child:ListView(
                         shrinkWrap: true,
                         physics:const BouncingScrollPhysics(),
                         children: [
-                          ...controller.chapters.map((element) =>
+                          ...controller.volumes.map((element) =>
                             InkWell(
                               onTap: () {
-                                Get.toNamed(RouterNavigation.read, arguments: {'chapter': controller.chapters.indexOf(element), 'isChapter': true});
-                                controller.onTapChapterCard(element.chapter);
+                                // Get.toNamed(RouterNavigation.read, arguments: {'chapter': controller.chapters.indexOf(element), 'isChapter': true});
+                                // controller.onTapChapterCard(element.chapter);
+                                controller.onTapVolumeCard(element);
                               },
-                              child: ChapterCard(chapter: element),
+                              child: ChapterCard(chapter: element, showChapter: controller.mapVolumes[element].length > 0, chapters: controller.mapVolumes[element],),
                             )
                           ).toList()
                         ],
@@ -203,7 +183,7 @@ class Detail extends GetView<DetailController> {
                 IconButton(
                   icon: controller.comicD.isShared == 1 ? Image.asset('assets/images/accept.png', height: 35, fit: BoxFit.fitHeight,):Icon(Icons.favorite, color: controller.isFavorite.value? Colors.red :Color.fromARGB(255, 187, 184, 184) ,size: 32,),
                   onPressed: () {
-                    controller.selectFavoriteComic();
+                    (controller.comicD.isShared ==1 ) ? controller.acceptShare() :controller.selectFavoriteComic();
                   },
                 ),
               ),
@@ -211,11 +191,13 @@ class Detail extends GetView<DetailController> {
             SizedBox(width: 3.0.wp,),
             Flexible(
               flex: 2,
-              child: IconButton(
-                onPressed: () {
-                  Get.toNamed(RouterNavigation.share, arguments: controller.comicD.id);
-                },
-                icon:controller.comicD.isShared == 1? Image.asset('assets/images/close.png', height: 35, fit: BoxFit.fitHeight,) : Icon(Icons.share_outlined, color: Color.fromARGB(255, 187, 184, 184), size: 32,),
+              child: GetBuilder<DetailController>(builder: (controller) =>
+                IconButton(
+                  onPressed: () {
+                    controller.comicD.isShared == 1 ? controller.unaccpetShare() : Get.toNamed(RouterNavigation.share, arguments: controller.comicD.id);
+                  },
+                  icon:controller.comicD.isShared == 1? Image.asset('assets/images/close.png', height: 35, fit: BoxFit.fitHeight,) : Icon(Icons.share_outlined, color: Color.fromARGB(255, 187, 184, 184), size: 32,),
+                )
               )
             ),
             SizedBox(width: 3.0.wp,),
@@ -225,10 +207,13 @@ class Detail extends GetView<DetailController> {
                 InkWell(
                   onTap: () {
                     if (controller.recentChapter.value != null) {
-                      Get.toNamed(RouterNavigation.read, arguments: {'chapter': controller.chapters.indexOf(controller.recentChapter.value),'isChapter': true});
+                      Get.toNamed(RouterNavigation.read, arguments: {'chapter': controller.chapters.indexOf(controller.recentChapter.value), 'volume': controller.recentVolume.value});
                     } else {
-                      Get.toNamed(RouterNavigation.read, arguments: {'chapter': 0, 'isChapter': true});
-                      controller.onTapChapterCard(controller.chapters[0].chapter);
+                      if (controller.chapters.isNotEmpty) {
+                        Chapter volume = controller.getVolume(controller.chapters[0]);
+                        Get.toNamed(RouterNavigation.read, arguments: {'chapter': 0, 'volume': volume});
+                        controller.onTapChapterCard(controller.chapters[0], volume.chapter);
+                      }
                     }
                   },
                   child: Container(
@@ -239,7 +224,7 @@ class Detail extends GetView<DetailController> {
                     ),
                     child: Center(
                       child: Text(
-                        controller.recentChapter.value == null? 'Start read' : 'Chapter ${controller.recentChapter.value!.chapter}',
+                        controller.recentChapter.value == null? 'Start read' : 'Chapter ${controller.recentChapter.value!.chapter} - Volume ${controller.recentVolume.value!.chapter}',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 13.0.sp,

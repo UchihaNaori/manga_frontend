@@ -10,18 +10,17 @@ class ReadComicController extends GetxController {
   RxBool showAppBar = true.obs;
   DetailController detailC = Get.find();
   Rxn<Chapter> chapter = Rxn<Chapter>();
+  Chapter volume = Get.arguments['volume'];
   int chapterIndex = 0;
+  int indexInVolume = 0;
   RxBool isPageTurnView = false.obs;
-  bool isChapter = Get.arguments['isChapter'];
   String chapName = '';
+  List<Chapter> chapters = <Chapter>[].obs;
 
   @override
   Future<void> onInit() async {
-    if (isChapter) {
-      await loadContent(Get.arguments['chapter']);
-    } else {
-      await loadContentVolume(Get.arguments['path']);
-    }
+    await loadContent(Get.arguments['chapter']);
+    setChapters();
     super.onInit();
   }
   void setChapter(int index) {
@@ -29,17 +28,33 @@ class ReadComicController extends GetxController {
     chapterIndex = index;
   }
 
-  void setVolume() {
-    chapter.value = Get.arguments['volume'];
-    String path = Get.arguments['path'];
-    chapterIndex = chapter.value!.listPaths.indexOf(path);
-    if (chapter.value!.listPaths.length == 1) {
-      chapName = 'All chap';
-    } else {
-      List<String> arrStr = path.split('/');
-      chapName = arrStr[arrStr.length - 1];
-    }
+  void setIndexInVolume(int value) {
+    indexInVolume = value;
+  }
 
+  void setChapters() {
+    chapters = detailC.getChaptersInVolume(volume);
+    for (int i = 0; i<chapters.length; i++) {
+      if (chapters[i].id == chapter.value!.id) {
+        indexInVolume = i;
+        break;
+      }
+    }
+    update();
+  }
+
+  void setVolume(Chapter newVolume) {
+    // chapter.value = Get.arguments['volume'];
+    // String path = Get.arguments['path'];
+    // chapterIndex = chapter.value!.listPaths.indexOf(path);
+    // if (chapter.value!.listPaths.length == 1) {
+    //   chapName = 'All chap';
+    // } else {
+    //   List<String> arrStr = path.split('/');
+    //   chapName = arrStr[arrStr.length - 1];
+    // }
+    volume = newVolume;
+    update();
   }
 
   Future<void> loadContent(int index) async {
@@ -49,7 +64,7 @@ class ReadComicController extends GetxController {
   }
 
   Future<void> loadContentVolume(String path) async {
-    setVolume();
+//    setVolume();
     links = await readComicRepository.getcontentChapterInVolume(path);
     update();
   }

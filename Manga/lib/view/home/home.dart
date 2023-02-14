@@ -8,7 +8,6 @@ import 'package:manga_read/view/home/widgets/category_card.dart';
 import 'package:manga_read/view/home/widgets/comic_card.dart';
 import 'package:manga_read/view/home/widgets/comic_card_list.dart';
 import 'package:manga_read/view/home/widgets/header.dart';
-import 'package:manga_read/view/bookcase/recent/recent.dart';
 import 'package:manga_read/view/profile/profile.dart';
 import 'package:manga_read/view/widgets/message.dart';
 import 'package:manga_read/view/widgets/search_comic.dart';
@@ -114,6 +113,7 @@ class Home extends GetView<HomeController> {
                           shrinkWrap: true,
                           children: [
                             CategoryCard(category: Category(id: 0, title: 'All', description: 'Tất cả thể loại')),
+                            CategoryCard(category: Category(id: -1, title: 'Shared', description: 'Truyện được chia sẻ')),
                             ...controller.categories.map((e) =>CategoryCard(category: e)).toList()
                           ],
                         ),
@@ -122,7 +122,7 @@ class Home extends GetView<HomeController> {
                       SizedBox(
                         height: 63.0.hp,
                         child: GetX<HomeController>(builder: (controller) =>
-                        controller.comics.length > 0?
+                        controller.comics.isNotEmpty?
                           controller.isShowGrid.value ?
                             ListView(
                               shrinkWrap: true,

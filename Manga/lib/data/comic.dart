@@ -53,7 +53,7 @@ class Comic {
     userId: map['user_id'],
     author: map['author'],
     coverImage: map['cover_image'],
-    last_chapter: map['last_chapter'] ?? 'Chapter 1'
+    last_chapter: map['last_chapter'] ?? 'Chapter 1 - Volume 0'
   );
 
 

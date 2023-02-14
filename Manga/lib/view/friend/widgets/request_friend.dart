@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:manga_read/controller/share_controller.dart';
-import 'package:manga_read/routers/router.dart';
+import 'package:get/get.dart';
+import 'package:manga_read/common/values/const.dart';
+import 'package:manga_read/controller/friend_controller.dart';
 import '../../../common/utils/extensions.dart';
 import '../../../data/user.dart';
-import 'package:get/get.dart';
 
-class ShareCard extends StatelessWidget {
+class FriendRequestCard extends StatelessWidget {
   final User user;
-  ShareController shareC = Get.find();
-  ShareCard({required this.user});
+  FriendRequestCard({required this.user});
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 1.0.hp),
-      height: 10.0.hp,
+      height: 12.0.hp,
       child: Row(
         children: [
           ClipRRect(
@@ -26,7 +25,7 @@ class ShareCard extends StatelessWidget {
           ),
           SizedBox(width: 5.0.wp,),
           SizedBox(
-            width: 55.0.wp,
+            width: 50.0.wp,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -57,13 +56,26 @@ class ShareCard extends StatelessWidget {
               ],
             ),
           ),
-          IconButton(
-            onPressed:  () {
-              shareC.containShared(user) ? shareC.unShare(user.id) :shareC.create(user);
-              Get.toNamed(RouterNavigation.share);
-            },
-            icon:shareC.containShared(user) ? Image.asset('assets/images/icon_unshare.png', height: 30, fit: BoxFit.fitHeight,)
-            :const Icon(Icons.share, color: Colors.black, size: 30,)
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                onPressed:  () {
+                  Get.find<FriendController>().accept(user);
+                  Get.back();
+                },
+                iconSize: 30,
+                icon:Image.asset('assets/images/accept_user.png', width: 25, fit: BoxFit.fitWidth,)
+              ),
+              IconButton(
+                onPressed:  () {
+                  Get.find<FriendController>().unAccept(user);
+                  Get.back();
+                },
+                iconSize: 30,
+                icon:Image.asset('assets/images/user_unaccept.png', height: 25, fit: BoxFit.fitWidth,)
+              ),
+            ],
           )
         ],
       ),

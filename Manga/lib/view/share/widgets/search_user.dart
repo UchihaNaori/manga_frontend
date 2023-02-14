@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:manga_read/controller/friend_controller.dart';
 import 'package:get/get.dart';
+import 'package:manga_read/view/widgets/message.dart';
 import '../../../common/utils/extensions.dart';
+import '../../../common/values/const.dart';
 import './share_card.dart';
 
 class SearchUser extends SearchDelegate {
@@ -47,14 +50,17 @@ class SearchUser extends SearchDelegate {
       builder: (context, snapshot) =>  Container(
       padding: EdgeInsets.only(top: 3.0.hp, left: 5.0.wp, right: 5.0.wp),
       color: Colors.white,
-      child:ListView.builder(
+      child:
+      friendC.users.isNotEmpty?
+        ListView.builder(
           shrinkWrap: true,
           itemBuilder: (context, index) {
             return ShareCard(user: friendC.users[index]);
           },
           itemCount: friendC.users.length,
           physics:const BouncingScrollPhysics(),
-        ),
+        )
+      :Message(message: 'No matching \n results found'),
       //),
       ),
     );
@@ -64,12 +70,9 @@ class SearchUser extends SearchDelegate {
   Widget buildSuggestions(BuildContext context) {
     // TODO: implement buildSuggestions
     // throw UnimplementedError();
-    List<String> suggestions = [
-      'Manga',
-      'Manhwa'
-      'Comedia',
-      'Horrow'
-    ];
+    int userId = GetStorage().read(Constant.KEY_USER_ID);
+    String keys = GetStorage().read(Constant.KEY_SEARCH_USER + userId.toString()) ?? '';
+    List<String> suggestions = keys.split(', ');
 
     return ListView.builder(
         itemCount: suggestions.length,

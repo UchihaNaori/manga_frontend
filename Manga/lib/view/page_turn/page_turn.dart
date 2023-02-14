@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:manga_read/common/utils/extensions.dart';
 import './builder/index.dart';
 
 class PageTurn extends StatefulWidget {

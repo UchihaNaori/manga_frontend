@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:manga_read/service/recent_repository.dart';
 
+import '../data/chapter.dart';
 import '../data/comic.dart';
 
 class RecentController extends GetxController {
@@ -19,22 +21,20 @@ class RecentController extends GetxController {
     mapRecents.value = await recentRepsitory.listComics(userId);
   }
 
-  Future<void> updateRecent(Comic comic, int chapter) async {
+  Future<void> updateRecent(Comic comic, Chapter chapter, int volume) async {
     bool isContainmap = false;
     mapRecents.forEach((key, value) async {
       if (key.id == comic.id) {
         isContainmap = true;
-        if (int.parse(value) < chapter) {
-          mapRecents[key] = chapter.toString();
-          await recentRepsitory.updateRecent(comic.id, 1, chapter);
-        }
+        mapRecents[key] = 'Chapter ${chapter.chapter} - Volume $volume';
+        await recentRepsitory.updateRecent(comic.id, chapter.id, volume);
         return;
       }
     });
 
     if (!isContainmap) {
-      mapRecents[comic] = chapter.toString();
-      await recentRepsitory.createRecent(comic.id, chapter);
+      mapRecents[comic] = 'Chapter ${chapter.chapter} - Volume $volume';
+      await recentRepsitory.createRecent(comic.id, chapter.id, volume);
     }
   }
 }

@@ -55,7 +55,7 @@ class ComicCard extends GetView {
               ),
               SizedBox(height: 0.5.hp,),
               Text(
-                comic.last_chapter,
+                comic.last_chapter.split(' - ')[0],
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 11.0.sp

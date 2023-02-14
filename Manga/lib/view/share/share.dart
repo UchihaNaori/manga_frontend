@@ -29,7 +29,7 @@ class ShareComic extends StatelessWidget {
             onPressed: () {
               showSearch(context: context, delegate: SearchUser());
             },
-            icon: const Icon(Icons.search, size: 28,)
+            icon: const Icon(Icons.person_search_sharp, size: 28,)
           )
         ],
       ),

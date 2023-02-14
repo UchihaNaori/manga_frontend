@@ -66,7 +66,7 @@ class ResetPassword extends StatelessWidget {
                                   obscureText: !controller.showOldPass.value,
                                   textAlign: TextAlign.left,
                                   decoration: InputDecoration(
-                                    hintText: 'Old password',
+                                    hintText: 'Current password',
                                     focusedBorder: InputBorder.none,
                                     border: InputBorder.none,
                                     hintStyle: TextStyle(
@@ -78,7 +78,7 @@ class ResetPassword extends StatelessWidget {
                                       TextStyle(fontSize: 13.0.sp, color: Colors.black),
                                   validator: (value) {
                                     if(value == null || value.trim().isEmpty) {
-                                      return 'Please type your old password';
+                                      return 'Please type your current password';
                                     }
 
                                     return null;

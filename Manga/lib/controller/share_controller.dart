@@ -1,7 +1,9 @@
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:manga_read/controller/friend_controller.dart';
 import 'package:manga_read/service/share_repository.dart';
-
+import '../common/values/const.dart';
 import '../data/user.dart';
 
 class ShareController extends GetxController {
@@ -24,12 +26,14 @@ class ShareController extends GetxController {
     update();
   }
 
-  Future<void> create(int ownerId, User user) async {
+  Future<void> create(User user) async {
     if (isFriend(user.id)) {
       friends.removeWhere((element) => element.id == user.id);
     }
     listShared.add(user);
-    await shareRepository.create(ownerId, user.id, comicId);
+    int userId = GetStorage().read(Constant.KEY_USER_ID);
+    EasyLoading.showSuccess('Share comic success!', dismissOnTap: true);
+    await shareRepository.create(userId, user.id, comicId);
     update();
   }
 
@@ -70,6 +74,7 @@ class ShareController extends GetxController {
         break;
       }
     }
+    EasyLoading.showSuccess('Stop share comic success!', dismissOnTap: true);
     bool success = await shareRepository.unShare(comicId, userId);
     update();
   }

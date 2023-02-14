@@ -5,6 +5,7 @@ import 'package:manga_read/data/comic.dart';
 import 'package:manga_read/routers/router.dart';
 import 'package:manga_read/service/home_repository.dart';
 import '../data/category.dart';
+import '../common/values/const.dart';
 
 class HomeController extends GetxController {
   HomeRepository homeRepository;
@@ -28,17 +29,28 @@ class HomeController extends GetxController {
 
   Future<void> loadHome() async {
     categories.assignAll(await homeRepository.getCategories());
-    comics = await homeRepository.getComics();
-    allComic = comics;
+    allComic = await homeRepository.getComics();
+    for(Comic comic in allComic) {
+      if (comic.isShared != 1) {
+        comics.add(comic);
+      }
+    }
     loading.value = false;
     EasyLoading.dismiss();
     update();
   }
 
   Future<List<Comic>> searchComic(String key) async {
-    int userId = await GetStorage().read('userId');
+    int userId = await GetStorage().read(Constant.KEY_USER_ID);
+    String keys = GetStorage().read(Constant.KEY_SEARCH_COMIC + userId.toString()) ?? '';
+    if (keys != '') {
+      if (!keys.contains(key)) {
+        GetStorage().write(Constant.KEY_SEARCH_COMIC + userId.toString(), '$keys, $key');
+      }
+    } else {
+      GetStorage().write(Constant.KEY_SEARCH_COMIC + userId.toString(), key);
+    }
     searchComics = await homeRepository.searchComic(userId, key);
-    print(searchComics.length);
     return searchComics;
   }
 
@@ -55,7 +67,18 @@ class HomeController extends GetxController {
     selectCategoryId.value = value;
     List<Comic> comicsByCategory = [];
     if (value == 0) {
-      comicsByCategory = allComic;
+      for(Comic comic in allComic) {
+        if (comic.isShared != 1) {
+          comicsByCategory.add(comic);
+        }
+      }
+    }
+    if (value == -1) {
+      for(Comic comic in allComic) {
+        if (comic.isShared == 1) {
+          comicsByCategory.add(comic);
+        }
+      }
     } else {
       for(Comic comic in allComic) {
         if (comic.listCategory.contains(title)) {
@@ -71,5 +94,16 @@ class HomeController extends GetxController {
   }
   void setSelectedIndex(int value) {
     selectedIndex.value = value;
+  }
+
+  void unaccpetShare(Comic comic) {
+    allComic.remove(comic);
+    comics.remove(comic);
+    update();
+  }
+
+  void accept(Comic comic) {
+    comics.remove(comic);
+    update();
   }
 }

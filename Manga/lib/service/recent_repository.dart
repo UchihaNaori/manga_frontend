@@ -14,15 +14,16 @@ class RecentRepsitory {
     if (responses.statusCode == Constant.STATUS_OK) {
       List maps = responses.body;
       for (int i = 0; i<maps.length; i++) {
-        recents[Comic.fromMap(maps[i]['comic'])] = maps[i]['chapter_recent'].toString();
+        recents[Comic.fromMap(maps[i]['comic'])] = 'Chapter ${maps[i]['chap'].toString()} - Volume ${maps[i]['volume'].toString()}';
       }
     } else {
       print(responses.statusCode);
     }
     return recents;
   }
-  Future<void> updateRecent(int comicId, int userId, int recent) async {
-    Response response = await recentProvider.updateRecent(comicId, userId, recent);
+  Future<void> updateRecent(int comicId, int recent, int volume) async {
+    int userId = await GetStorage().read(Constant.KEY_USER_ID);
+    Response response = await recentProvider.updateRecent(comicId, userId, recent, volume);
     if(response.statusCode == Constant.STATUS_OK) {
       print('ok');
     } else {
@@ -30,9 +31,9 @@ class RecentRepsitory {
     }
   }
 
-  Future<void> createRecent(int comicId, int recent) async {
+  Future<void> createRecent(int comicId, int recent, int volume) async {
     int userId = await GetStorage().read('userId');
-    Response response = await recentProvider.create(userId, comicId, recent);
+    Response response = await recentProvider.create(userId, comicId, recent, volume);
 
     if(response.statusCode == Constant.STATUS_OK) {
       print('ok');

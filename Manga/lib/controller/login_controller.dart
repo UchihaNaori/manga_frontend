@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:manga_read/routers/router.dart';
@@ -24,6 +25,8 @@ class LoginController extends GetxController {
         GetStorage().write('userId', response.body['userId']);
         GetStorage().write('pass', user['password']);
         Get.offNamed(RouterNavigation.home);
+      } else {
+         EasyLoading.showError( 'Login failed',dismissOnTap: true);
       }
     } else {
       print(response.statusCode);

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:manga_read/controller/friend_controller.dart';
 import 'package:get/get.dart';
 import '../../common/utils/extensions.dart';
 import './friend_card.dart';
 import './message.dart';
+import '../../common/values/const.dart';
 
 class SearchUser extends SearchDelegate {
   FriendController friendC = Get.find();
@@ -67,12 +69,10 @@ class SearchUser extends SearchDelegate {
   Widget buildSuggestions(BuildContext context) {
     // TODO: implement buildSuggestions
     // throw UnimplementedError();
-    List<String> suggestions = [
-      'Manga',
-      'Manhwa'
-      'Comedia',
-      'Horrow'
-    ];
+    int userId = GetStorage().read(Constant.KEY_USER_ID);
+    String keys = GetStorage().read(Constant.KEY_SEARCH_USER + userId.toString()) ?? '';
+
+    List<String> suggestions = keys.split(', ');
 
     return ListView.builder(
         itemCount: suggestions.length,
@@ -80,7 +80,12 @@ class SearchUser extends SearchDelegate {
             final suggestion = suggestions[index];
 
             return ListTile(
-              title: Text(suggestion),
+              title: Text(
+                suggestion,
+                style: TextStyle(
+                  fontSize: 13.0.sp,
+                ),
+              ),
               onTap: () {
                 query = suggestion;
 

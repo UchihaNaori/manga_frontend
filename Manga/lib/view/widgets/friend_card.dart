@@ -60,7 +60,6 @@ class FriendCard extends StatelessWidget {
           if (!contain(user))
           IconButton(
             onPressed:  () {
-              Get.back();
               Get.find<FriendController>().createFriend(user);
             },
             icon:const Icon(Icons.person_add,color: Color.fromARGB(255, 178, 177, 177), size: 30,)

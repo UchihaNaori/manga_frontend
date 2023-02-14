@@ -42,7 +42,7 @@ class PageTurnEffect extends CustomPainter {
     );
 
     final ip = Paint();
-    for (double x = 0; x < size.width; x++) {
+    for (double x = 0; x < size.width; x+=0.8) {
       final xf = (x / w);
       final v = (calcR * (math.sin(math.pi / 0.5 * (xf - (1.0 - pos)))) +
           (calcR * 1.1));
@@ -51,7 +51,7 @@ class PageTurnEffect extends CustomPainter {
       final sr = Rect.fromLTRB(sx, 0, sx + 1.0, image.height.toDouble());
       final yv = ((h * calcR * movX) * hWRatio) - hWCorrection;
       final ds = (yv * v);
-      final dr = Rect.fromLTRB(xv * w, 5.0.hp - ds, xv * w + 1.0, h + ds+ 5.0.hp);
+      final dr = Rect.fromLTRB(xv * w, 5.0.hp - ds, xv * w + 1.0, h + ds + 5.0.hp);
       c.drawImageRect(image, sr, dr, ip..filterQuality = FilterQuality.high);
     }
   }
